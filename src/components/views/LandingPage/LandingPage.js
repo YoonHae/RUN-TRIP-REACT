@@ -7,6 +7,7 @@ import RadioBox from './Sections/RadioBox';
 import { continents, price } from './Sections/Datas';
 import SearchFeature from './Sections/SearchFeature';
 import moment from 'moment';
+import logo from '../../../images/logo.jpg'
 
 const { Meta } = Card;
 
@@ -153,7 +154,10 @@ function LandingPage() {
     return (
         <div style={{ width: '75%', margin: '3rem auto' }}>
             <div style={{ textAlign: 'center' }}>
+                <img src={logo} style={{width: '100%', height: '50%', marginBottom: '20px'}}/>
+                <br />
                 <h2>  Let's Run Anywhere  <Icon type="rocket" />  </h2>
+                <br />
             </div>
 
 

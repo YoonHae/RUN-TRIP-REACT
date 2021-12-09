@@ -10,13 +10,12 @@ function LeftMenu(props) {
       <a href="/">Home</a>
     </Menu.Item>
     <SubMenu title={<span>Blogs</span>}>
-      <MenuItemGroup title="Item 1">
-        <Menu.Item key="setting:1">Option 1</Menu.Item>
-        <Menu.Item key="setting:2">Option 2</Menu.Item>
+      <MenuItemGroup title="Who Am I">
+        <Menu.Item key="setting:1"><a href="https://github.com/YoonHae">GitHub</a></Menu.Item>
       </MenuItemGroup>
-      <MenuItemGroup title="Item 2">
-        <Menu.Item key="setting:3">Option 3</Menu.Item>
-        <Menu.Item key="setting:4">Option 4</Menu.Item>
+      <MenuItemGroup title="Where Is This Project?">
+        <Menu.Item key="setting:3"><a href="https://github.com/YoonHae/RUN-TRIP">Back</a></Menu.Item>
+        <Menu.Item key="setting:4"><a href="https://github.com/YoonHae/RUN-TRIP-REACT">Front</a></Menu.Item>
       </MenuItemGroup>
     </SubMenu>
   </Menu>
