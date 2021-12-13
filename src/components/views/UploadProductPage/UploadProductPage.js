@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Typography, Button, Form, message, Input, Icon, DatePicker } from 'antd';
 import FileUpload from '../../utils/FileUpload'
 import Axios from 'axios';
-import moment from 'moment';
+import ProductInputArea from './ProductInputArea';
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -27,51 +27,71 @@ export const Continents = [
 
 function UploadProductPage(props) {
 
-    const [TitleValue, setTitleValue] = useState("")
-    const [DescriptionValue, setDescriptionValue] = useState("")
-    const [DateValue, setDateValue] = useState(null)
-    const [ContinentValue, setContinentValue] = useState(1)
-
-    const [Images, setImages] = useState([])
-
-
-    const onTitleChange = (event) => {
-        setTitleValue(event.currentTarget.value)
-    }
-
-    const onDescriptionChange = (event) => {
-        setDescriptionValue(event.currentTarget.value)
-    }
-
-    const onDateChange = (date, dateString) => {
-        setDateValue(dateString.replace('/', '').replace('/', ''));
-    }
-
-    const onContinentsSelectChange = (event) => {
-        setContinentValue(event.currentTarget.value)
+    let Product = {};
+    let Images = [];
+    
+    let ProductCallback = null;
+    const getProduct = (cb) => {
+        ProductCallback =  cb;
     }
 
     const updateImages = (newImages) => {
-        setImages(newImages)
+        Images = newImages;
     }
-    const onSubmit = (event) => {
+
+    const onSubmit = async (event) => {
         event.preventDefault();
 
-
-        if (!TitleValue || !DescriptionValue || !DateValue ||
-            !ContinentValue || !Images) {
+        Product = ProductCallback();
+        if (!Product.title || !Product.description || !Product.date ||
+            !Product.continent || !Images) {
             return alert('누락된 정보가 있습니다. 모두 기입해주세요.')
         }
 
-        const variables = {
-            title: TitleValue,
-            description: DescriptionValue,
-            date: DateValue,
-            images: Images,
-            continent: ContinentValue,
+        let imageUrlList = [];
+        const config = { header: { 'content-type': 'multipart/form-data' } };
+
+        // 올리던중 오류나면 기존에 올린 데이터 제거
+        let deleteS3 = async (urlList) => {
+            console.log(urlList);
+            return await Axios.delete('/api/aws/s3', {data: {deleteUrls: urlList}});
+        }
+        
+        for (var image of Images) {
+            // get S3 upload url
+            let response = await Axios.get('/api/aws/s3/securekey');
+            if( response.data.success)  {
+                const url = response.data.url;
+                console.log('issue s3 url')
+                // upload image to S3
+                response = await Axios.put(url, image, config);
+                if(response.status === 200)
+                {
+                    console.log('upload s3')
+                    const imageUrl = url.split('?')[0];
+                    imageUrlList.push(imageUrl);
+                }
+                else 
+                {
+                    console.log('Fail Put S3 image');
+                    await deleteS3(imageUrlList);
+                    alert('이미지를 저장하는중 문제가 발생하였습니다.');
+                    return;
+                }
+            } else {
+                console.log('Fail Get S3 URL');
+                await deleteS3(imageUrlList);
+                alert('이미지를 저장하는중 문제가 발생하였습니다.');
+                
+                //delete s3 files
+                return;
+            }
+            
         }
 
-        Axios.post('/api/plans', variables)
+        Product.images = imageUrlList;
+        
+        Axios.post('/api/plans', Product)
             .then(response => {
                 if (response.data.success) {
                     alert('등록이 완료되었습니다.')
@@ -93,43 +113,18 @@ function UploadProductPage(props) {
             <Form onSubmit={onSubmit} >
 
                 {/* DropZone */}
-                <FileUpload refreshFunction={updateImages} />
+                <FileUpload refreshFunction={updateImages} uploadedImages={Images} />
 
                 <br />
                 <br />
-                <label>Title</label>
-                <Input
-                    onChange={onTitleChange}
-                    value={TitleValue}
-                />
-                <br />
-                <br />
-                <label>Description</label>
-                <TextArea
-                    onChange={onDescriptionChange}
-                    value={DescriptionValue}
-                />
-                <br />
-                <br />
-                <label>When</label> <br />
-                <DatePicker onChange={onDateChange}
-                                defaultValue={null} format='YYYY/MM/DD'/>
-                
-                
-                <br /><br />
-                <label>Where</label><br />
-                <select onChange={onContinentsSelectChange} value={ContinentValue}>
-                    {Continents.map(item => (
-                        <option key={item.key} value={item.key}>{item.value} </option>
-                    ))}
-                </select>
+                <ProductInputArea product={Product} getProductCallback={getProduct}></ProductInputArea>
                 <br />
                 <br />
 
                 <Button
                     onClick={onSubmit}
                 >
-                    Submit
+                    생성하기
                 </Button>
 
             </Form>

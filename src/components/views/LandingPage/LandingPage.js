@@ -69,8 +69,9 @@ function LandingPage() {
     const renderCards = Products.map((product, index) => {
         let str_when = product.date ? `${product.date.substr(0, 4)}/${product.date.substr(4, 2)}/${product.date.substr(6, 2)}` : '언제든';
         let str_where = product.continent ? continents[product.continent-1].name : '어디든';
+        index += 1;
 
-        return <Col lg={6} md={8} xs={24} key={`${product.id}`}>
+        return <Col lg={6} md={8} xs={24} key={`${index}`}>
             <Card
                 hoverable={true}
                 cover={<a href={`/product/${product.id}`} > <ImageSlider images={product.images} /></a>}

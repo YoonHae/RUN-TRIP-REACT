@@ -4,34 +4,12 @@ import { Icon } from 'antd';
 import Axios from 'axios';
 function FileUpload(props) {
 
-    const [Images, setImages] = useState([])
+    const [Images, setImages] = useState(props.uploadedImages)
 
     const onDrop = (files) => {
-        // get secure url
-        Axios.get('/api/aws/s3/securekey')
-        .then(response => {
-            if( response.data.success)  {
-                const url = response.data.url;
-                const file= files[0];
-
-                const config = {
-                    header: { 'content-type': 'multipart/form-data' }
-                }
-
-                Axios.put(url, file, config)
-                .then(response => {
-                   if(response.status === 200)
-                   {
-                       const imageUrl = url.split('?')[0];
-
-                       setImages([...Images, imageUrl])
-                       props.refreshFunction([...Images, imageUrl])
-                   }
-                })
-            } else {
-                alert('이미지를 저장하는중 문제가 발생하였습니다.');
-            }
-        });
+        //let fileUrl = URL.createObjectURL(files[0]);
+        setImages([...Images, files[0]]);
+        props.refreshFunction([...Images, files[0]]);
     }
 
 
@@ -72,7 +50,7 @@ function FileUpload(props) {
 
                 {Images.map((image, index) => (
                     <div onClick={() => onDelete(image)} key={`${index}`}>
-                        <img style={{ minWidth: '300px', width: '300px', height: '240px' }} src={`${image}`} alt={`productImg-${index}`} />
+                        <img style={{ minWidth: '300px', width: '300px', height: '240px' }} src={typeof image === 'string'?image:URL.createObjectURL(image)} alt={`productImg-${index}`} />
                     </div>
                 ))}
 

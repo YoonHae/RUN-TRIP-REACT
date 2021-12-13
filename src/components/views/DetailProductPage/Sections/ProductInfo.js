@@ -29,13 +29,9 @@ function ProductInfo(props) {
             <br />
             <br />
             <br />
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Button size="large" shape="round" type="danger"
-                    onClick={addToCarthandler}
-                >
-                    함께해요
-                    </Button>
-            </div>
+            
+                
+            
         </div>
     )
 }
