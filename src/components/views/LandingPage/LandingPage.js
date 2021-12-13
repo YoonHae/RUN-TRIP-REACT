@@ -74,7 +74,11 @@ function LandingPage() {
         return <Col lg={6} md={8} xs={24} key={`${index}`}>
             <Card
                 hoverable={true}
-                cover={<a href={`/product/${product.id}`} > <ImageSlider images={product.images} /></a>}
+                cover={<a href={`/product/${product.id}`} > 
+                <ImageSlider 
+                    images={product.images} 
+/>
+                </a>}
             >
                 <Meta
                     title={product.title}
@@ -155,7 +159,7 @@ function LandingPage() {
     return (
         <div style={{ width: '75%', margin: '3rem auto' }}>
             <div style={{ textAlign: 'center' }}>
-                <img src={logo} style={{width: '100%', height: '50%', marginBottom: '20px'}}/>
+                <img src={logo} style={{width: '100%', height: '60vh', marginBottom: '20px'}}/>
                 <br />
                 <h2>  Let's Run Anywhere  <Icon type="rocket" />  </h2>
                 <br />
@@ -196,8 +200,6 @@ function LandingPage() {
                                 {renderCards}
 
                             </Row>
-
-
                         </div>
                 }
             </div>

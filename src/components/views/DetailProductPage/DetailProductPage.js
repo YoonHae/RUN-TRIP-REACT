@@ -12,7 +12,7 @@ import { HISTORY_SERVER } from '../../../components/Config';
 function DetailProductPage(props) {
     const dispatch = useDispatch();
     const productId = props.match.params.productId
-    const [Product, setProduct] = useState({})
+    const [Product, setProduct] = useState(null)
 
     const user = useSelector(state => state.user);
 
@@ -41,12 +41,27 @@ function DetailProductPage(props) {
             .then(response => {
                 if (response.data.success) {
                     alert('my trip 에 추가하였습니다.')
+                    setProduct({...Product, history_id: response.data.id});
                 } else {
                     alert('my trip 에 추가하는데 오류가 발생하였습니다.')
                 }
                 
             });    
         }
+
+    const deleteToCartHandler = () => {
+        Axios.delete('/api/history/'+Product.history_id)
+            .then(response => {
+                if (response.data.success) {
+                    alert('정상적으로 등록 취소되었습니다.')
+                    setProduct({...Product, history_id: null});
+                } else {
+                    alert('등록 취소중 문제가 발생하였습니다.')
+                }
+                
+            });    
+        }
+    
 
 
     const modifyProductHandler = () => {
@@ -66,9 +81,9 @@ function DetailProductPage(props) {
                 
             });    
         }
-    
 
-    
+
+    if (!Product) return <div>로딩중..</div>;
 
     return (
         <div className="postPage" style={{ width: '100%', padding: '3rem 4rem' }}>
@@ -86,19 +101,27 @@ function DetailProductPage(props) {
                 <Col lg={12} xs={24}>
                     <ProductInfo detail={Product} />
 
-                    {user && user.userData && user.userData.id !== Product.user_id 
+                    {user && user.userData && user.userData.id === Product.user_id 
                     ? (
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Button size="large" shape="round" type="danger" onClick={addToCartHandler}>함께해요</Button>    
-                        </div>
-                    )
-                    : (
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                             <Button shape="round" onClick={modifyProductHandler} style={{marginRight: "5px"}}>수정</Button>
                             <Button shape="round" type="danger" onClick={deleteProductHandler} style={{marginLeft:"5px"}}>삭제</Button>
                         </div>
-                    ) }
-
+                    )
+                    : 
+                        user && user.userData && Product.history_id > 0
+                        ? (
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                            <Button size="large" shape="round" type="danger" onClick={deleteToCartHandler}>다음 기회에</Button>    
+                        </div>
+                        )
+                        :
+                        (
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                            <Button size="large" shape="round" type="danger" onClick={addToCartHandler}>함께해요</Button>    
+                        </div>
+                        )
+                    }
                 </Col>
             </Row>
         </div>
