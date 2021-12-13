@@ -8,13 +8,13 @@ const { Title } = Typography;
 const { TextArea } = Input;
 
 export const Continents = [
-    { key: 1, value: "서울특별시" },
-    { key: 2, value: "부산광역시" },
-    { key: 3, value: "대구광역시" },
-    { key: 4, value: "인천광역시" },
-    { key: 5, value: "광주광역시" },
-    { key: 6, value: "울산광역시" },
-    { key: 7, value: "세종특별자치시" },
+    { key: 1, value: "서울" },
+    { key: 2, value: "부산" },
+    { key: 3, value: "대구" },
+    { key: 4, value: "인천" },
+    { key: 5, value: "광주" },
+    { key: 6, value: "울산" },
+    { key: 7, value: "세종시" },
     { key: 8, value: "경기도" },
     { key: 9, value: "강원도" },
     { key: 10, value: "충청북도" },
@@ -22,7 +22,7 @@ export const Continents = [
     { key: 12, value: "전라남도" },
     { key: 13, value: "경상북도" },
     { key: 14, value: "경상남도" },
-    { key: 15, value: "제주특별자치도" },
+    { key: 15, value: "제주도" },
 ]
 
 function UploadProductPage(props) {
