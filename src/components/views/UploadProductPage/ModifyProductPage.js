@@ -84,7 +84,10 @@ function ModifyProductPage(props) {
         }
                
         let deleteUrls = befImages.filter(value => !Images.includes(value));
-        if (deleteUrls.length > 0) await deleteS3(deleteUrls);
+        if (deleteUrls.length > 0) {
+            let deleteResponse = await deleteS3(deleteUrls);
+            console.log(deleteResponse);
+        }
         imageUrlList = []
         
         for (var image of Images) {
@@ -92,7 +95,8 @@ function ModifyProductPage(props) {
                 imageUrlList.push(image);
             } 
             else {
-                let response = await Axios.get('/api/aws/s3/securekey');
+                var imageInfo = {name: image.name, type: image.type, size: image.size, runtrip_id: productId};
+                let response = await Axios.get('/api/aws/s3/securekey', {params: imageInfo});
                 if( response.data.success)  {
                     const url = response.data.url;
                     console.log('issue s3 url')
@@ -125,7 +129,7 @@ function ModifyProductPage(props) {
             .then(response => {
                 if (response.data.success) {
                     alert('수정되었습니다.')
-                    props.history.push('/')
+                    props.history.push('/product/'+productId)
                 } else {
                     alert('수정중 문제가 발생하였습니다.')
                 }

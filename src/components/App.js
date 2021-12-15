@@ -11,9 +11,12 @@ import UploadProductPage from './views/UploadProductPage/UploadProductPage'
 import ModifyProductPage from './views/UploadProductPage/ModifyProductPage'
 import DetailProductPage from './views/DetailProductPage/DetailProductPage';
 import CartPage from './views/CartPage/CartPage';
-import HistoryPage from './views/HistoryPage/HistoryPage';
+import Axios from 'axios';
 
 function App() {
+  let token = window.localStorage.getItem('auth');
+  if(token) Axios.defaults.headers.common['Authorization'] = "Bearer " + token;
+  
   return (
     <Suspense fallback={(<div>Loading...</div>)}>
       <NavBar />

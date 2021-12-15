@@ -12,6 +12,8 @@ export default function (ComposedClass, reload, adminRoute = null) {
 
             dispatch(auth()).then(async response => {
                 if (await !response.payload.isAuth) {
+                    window.localStorage.removeItem('auth');
+
                     if (reload) {
                         props.history.push('/login')
                     }

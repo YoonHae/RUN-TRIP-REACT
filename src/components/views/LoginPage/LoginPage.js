@@ -5,6 +5,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Form, Icon, Input, Button, Checkbox, Typography } from 'antd';
 import { useDispatch } from "react-redux";
+import Axios from "axios";
 
 const { Title } = Typography;
 
@@ -46,6 +47,9 @@ function LoginPage(props) {
             .then(response => {
               if (response.payload.loginSuccess) {
                 window.localStorage.setItem('userId', response.payload.userId);
+                window.localStorage.setItem('auth', response.payload.token);
+                Axios.defaults.headers.common['Authorization'] = "Bearer " + response.payload.token;
+                
                 if (rememberMe === true) {
                   window.localStorage.setItem('rememberMe', values.email);
                 } else {

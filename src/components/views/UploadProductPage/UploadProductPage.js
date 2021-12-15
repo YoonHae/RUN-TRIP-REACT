@@ -41,66 +41,65 @@ function UploadProductPage(props) {
 
     const onSubmit = async (event) => {
         event.preventDefault();
-
         Product = ProductCallback();
+
+        console.log(Product);
+        console.log(Images);
         if (!Product.title || !Product.description || !Product.date ||
             !Product.continent || !Images) {
             return alert('누락된 정보가 있습니다. 모두 기입해주세요.')
         }
 
-        let imageUrlList = [];
-        const config = { header: { 'content-type': 'multipart/form-data' } };
+        Product.images = [];
+        let productId = null;
+        // 먼저 데이터는 insert 하고...
+        let response = await Axios.post('/api/plans', Product);
+        if (response.data.success) {
+            // pk 받아서 해당 정보를 s3 meta data 에 추가
+            productId = response.data.id;
+                        
+            let imageUrlList = [];
+            const config = { header: { 'content-type': 'multipart/form-data' },
+                            transformRequest: [function (data, headers) {
+                                delete headers.common['Authorization'];
+                                return data;
+                            }] };
 
-        // 올리던중 오류나면 기존에 올린 데이터 제거
-        let deleteS3 = async (urlList) => {
-            console.log(urlList);
-            return await Axios.delete('/api/aws/s3', {data: {deleteUrls: urlList}});
-        }
-        
-        for (var image of Images) {
-            // get S3 upload url
-            let response = await Axios.get('/api/aws/s3/securekey');
-            if( response.data.success)  {
-                const url = response.data.url;
-                console.log('issue s3 url')
-                // upload image to S3
-                response = await Axios.put(url, image, config);
-                if(response.status === 200)
-                {
-                    console.log('upload s3')
-                    const imageUrl = url.split('?')[0];
-                    imageUrlList.push(imageUrl);
-                }
-                else 
-                {
-                    console.log('Fail Put S3 image');
-                    await deleteS3(imageUrlList);
-                    alert('이미지를 저장하는중 문제가 발생하였습니다.');
-                    return;
-                }
-            } else {
-                console.log('Fail Get S3 URL');
-                await deleteS3(imageUrlList);
-                alert('이미지를 저장하는중 문제가 발생하였습니다.');
-                
-                //delete s3 files
-                return;
+            for (var image of Images) {
+                // get S3 upload url
+                var imageInfo = {name: image.name, type: image.type, size: image.size, runtrip_id: productId};
+                let response = await Axios.get('/api/aws/s3/securekey', {params: imageInfo});
+                if( response.data.success)  {
+                    const url = response.data.url;
+                    console.log('issue s3 url')
+                    // upload image to S3
+                    response = await Axios.put(url, image, config);
+                    if(response.status === 200)
+                    {
+                        console.log('upload s3')
+                        const imageUrl = url.split('?')[0];
+                        imageUrlList.push(imageUrl);
+                    }
+                } 
             }
             
+            let message = '등록이 완료되었습니다.';
+            // S3 업로드 후에 다시 update 
+            Product.images = imageUrlList;
+            Axios.put(`/api/plans/${productId}/images` , Product)
+                .then(response => {
+                    if (!response.data.success) {
+                        message = '이미지 정보없이 저장되었습니다.';
+                    }
+                })
+            
+            alert(message);
+            props.history.push('/product/'+productId);
+            
+            
+        } else {
+            alert('등록중 문제가 발생하였습니다.')
         }
-
-        Product.images = imageUrlList;
-        
-        Axios.post('/api/plans', Product)
-            .then(response => {
-                if (response.data.success) {
-                    alert('등록이 완료되었습니다.')
-                    props.history.push('/')
-                } else {
-                    alert('등록중 문제가 발생하였습니다.')
-                }
-            })
-
     }
 
     return (

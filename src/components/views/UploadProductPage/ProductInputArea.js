@@ -45,7 +45,7 @@ function ProductInputArea(props) {
         Product.title = TitleValue;
         Product.description = DescriptionValue;
         Product.date = DateValue;
-        Product.continent = ContinentValue;
+        Product.continent = ContinentValue ? ContinentValue : 1;
         return Product;
     });
 
