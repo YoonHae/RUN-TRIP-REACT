@@ -14,9 +14,10 @@ import CartPage from './views/CartPage/CartPage';
 import Axios from 'axios';
 
 function App() {
+  Axios.defaults.baseURL = process.env.REACT_APP_API_URL;
   let token = window.localStorage.getItem('auth');
   if(token) Axios.defaults.headers.common['Authorization'] = "Bearer " + token;
-  
+
   return (
     <Suspense fallback={(<div>Loading...</div>)}>
       <NavBar />

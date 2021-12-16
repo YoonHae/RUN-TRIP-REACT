@@ -17,6 +17,9 @@ function LeftMenu(props) {
         <Menu.Item key="setting:3"><a href="https://github.com/YoonHae/RUN-TRIP">Back</a></Menu.Item>
         <Menu.Item key="setting:4"><a href="https://github.com/YoonHae/RUN-TRIP-REACT">Front</a></Menu.Item>
       </MenuItemGroup>
+      <MenuItemGroup title="What is RUN-TRIP">
+        <Menu.Item key="setting:5"><a href="https://github.com/YoonHae/RUN-TRIP/wiki">Introduce</a></Menu.Item>
+      </MenuItemGroup>
     </SubMenu>
   </Menu>
   )

@@ -75,7 +75,12 @@ function ModifyProductPage(props) {
         }
 
         let imageUrlList = [];
-        const config = { header: { 'content-type': 'multipart/form-data' } };
+        const config = { header: { 'content-type': 'multipart/form-data' },
+                        transformRequest: [function (data, headers) {
+                            delete headers.common['Authorization'];
+                            return data;
+                        }] };
+
 
         // 올리던중 오류나면 기존에 올린 데이터 제거
         let deleteS3 = async (urlList) => {
