@@ -85,17 +85,15 @@ function UploadProductPage(props) {
             
             let message = '등록이 완료되었습니다.';
             // S3 업로드 후에 다시 update 
-            Product.images = imageUrlList;
-            Axios.put(`/api/plans/${productId}/images` , Product)
+            Axios.put(`/api/plans/${productId}` , {images: imageUrlList})
                 .then(response => {
                     if (!response.data.success) {
                         message = '이미지 정보없이 저장되었습니다.';
                     }
-                })
-            
-            alert(message);
-            props.history.push('/product/'+productId);
-            
+
+                    alert(message);
+                    props.history.push('/product/'+productId);
+                })            
             
         } else {
             alert('등록중 문제가 발생하였습니다.')
