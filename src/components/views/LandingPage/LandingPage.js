@@ -3,8 +3,7 @@ import Axios from 'axios';
 import { Icon, Col, Card, Row } from 'antd';
 import ImageSlider from '../../utils/ImageSlider';
 import CheckBox from './Sections/CheckBox';
-import RadioBox from './Sections/RadioBox';
-import { continents, price } from './Sections/Datas';
+import { continents } from './Sections/Datas';
 import SearchFeature from './Sections/SearchFeature';
 import moment from 'moment';
 import logo from '../../../images/logo.jpg'
@@ -20,8 +19,7 @@ function LandingPage() {
     const [SearchTerms, setSearchTerms] = useState("")
 
     const [Filters, setFilters] = useState({
-        continents: [],
-        price: []
+        continents: []
     })
 
     useEffect(() => {
@@ -36,7 +34,11 @@ function LandingPage() {
     }, [])
 
     const getProducts = (variables) => {
-        Axios.get('/api/plans', variables)
+        if (variables.continents) {
+            variables.continents = JSON.stringify(variables.continents);
+        }
+        console.log(variables);
+        Axios.get('/api/plans', {params: variables})
             .then(response => {
                 if (response.data.success) {
                     if (variables.loadMore) {
@@ -58,7 +60,7 @@ function LandingPage() {
             skip: skip,
             limit: Limit,
             loadMore: true,
-            filters: Filters,
+            continents: Filters.continents,
             searchTerm: SearchTerms
         }
         getProducts(variables)
@@ -94,7 +96,7 @@ function LandingPage() {
         const variables = {
             skip: 0,
             limit: Limit,
-            filters: filters
+            continents: filters.continents
 
         }
         getProducts(variables)
@@ -102,39 +104,12 @@ function LandingPage() {
 
     }
 
-    const handlePrice = (value) => {
-        const data = price;
-        let array = [];
-
-        for (let key in data) {
-
-            if (data[key]._id === parseInt(value, 10)) {
-                array = data[key].array;
-            }
-        }
-        console.log('array', array)
-        return array
-    }
-
-    
-    const onChangeDateRange = (value, dateString) => {
-        console.log('Selected Time: ', value);
-        console.log('Formatted Selected Time: ', dateString);
-    }
 
     const handleFilters = (filters, category) => {
 
         const newFilters = { ...Filters }
 
         newFilters[category] = filters
-
-        if (category === "price") {
-            let priceValues = handlePrice(filters)
-            newFilters[category] = priceValues
-
-        }
-
-        console.log(newFilters)
 
         showFilteredResults(newFilters)
         setFilters(newFilters)
@@ -145,7 +120,7 @@ function LandingPage() {
         const variables = {
             skip: 0,
             limit: Limit,
-            filters: Filters,
+            continents: Filters.continents,
             searchTerm: newSearchTerm
         }
 

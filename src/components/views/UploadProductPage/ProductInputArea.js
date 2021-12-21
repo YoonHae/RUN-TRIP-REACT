@@ -44,7 +44,7 @@ function ProductInputArea(props) {
     props.getProductCallback(() => {
         Product.title = TitleValue;
         Product.description = DescriptionValue;
-        Product.date = DateValue;
+        Product.date = DateValue.replace('/', '').replace('/', '');
         Product.continent = ContinentValue ? ContinentValue : 1;
         return Product;
     });

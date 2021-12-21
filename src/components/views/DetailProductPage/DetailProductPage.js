@@ -27,6 +27,7 @@ function DetailProductPage(props) {
                     setProduct(plan);
                 } else {
                     alert(response.data.message);
+                    props.history.push('/');
                 }
             })
 
